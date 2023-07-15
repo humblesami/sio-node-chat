@@ -17,16 +17,17 @@ async function verify_user(){
 
 let emit_methods = require('./emits');
 console.log(emit_methods);
-io.on('connection', function (socket) {
-    console.log('a user connected', socket.conn.id);
-    
-    emit_methods.me_only(socket, 'server_ping', {client_id: socket.conn.id});
+io.on('connection', function (socket) {        
+    socket.on('ping_from_client', function (data) {
+        console.log('Ping received from client', data);        
+    });
     socket.on('disconnected', function (msg) {
         console.log('User disconnected: ' + socket.id);        
     });
-    socket.on('disconnection', function (msg) {
-        console.log('User disconnection: ' + socket.id);        
-    });
+
+    let data_for_client = {client_id: socket.id};
+    console.log('pinging to client', data_for_client);
+    emit_methods.me_only(socket, 'ping_from_server', data_for_client);
 });
 
 function onMessageReceived(){
