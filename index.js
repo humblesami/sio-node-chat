@@ -17,7 +17,16 @@ async function verify_user(){
 
 let emit_methods = require('./emits');
 console.log(emit_methods);
-io.on('connection', function (socket) {        
+io.on('connection', function (socket) {
+
+    function disconnect_client(client_socket){        
+        client_socket.disconnect();
+    }
+
+    function create_join_room(client_socket, room_id){
+        client_socket.join(room_id);
+    }
+
     socket.on('ping_from_client', function (data) {
         console.log('Ping received from client', data);        
     });
@@ -30,9 +39,6 @@ io.on('connection', function (socket) {
     emit_methods.me_only(socket, 'ping_from_server', data_for_client);
 });
 
-function onMessageReceived(){
-
-}
 
 server.listen(3000, function () {
     console.log('listening on *:3000');
