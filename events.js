@@ -4,10 +4,12 @@ event_utils = {
     }
 }
 
-
-export default events = {
+module.exports = {
+    on_ping_received: function(socket, data_from_client){
+        console.log('Ping received from '+socket.id, data_from_client);
+    },
     on_ping_responded : function(client_socket, data){
-        verify_user(client_socket, data).then((data)=>{
+        event_utils.verify_user(client_socket, data).then((data)=>{
             console.log(data);
             if(data.success){
                 socket.verified = 1;
@@ -17,5 +19,5 @@ export default events = {
                 socket.disconnect();
             }
         });
-    }
+    },    
 }

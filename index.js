@@ -11,12 +11,15 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/html/index.html');
 });
 
-async function verify_user(){
-    return {success: 1};
-}
+let rooms = {};
+let socketIds = {};
+let idSockets = {};
+let name_spaces = {};
+let audience_by_id = {};
 
 let emit_methods = require('./emits');
-console.log(emit_methods);
+let events = require('./events');
+
 io.on('connection', function (socket) {
 
     function disconnect_client(client_socket){        
@@ -27,18 +30,21 @@ io.on('connection', function (socket) {
         client_socket.join(room_id);
     }
 
-    socket.on('ping_from_client', function (data) {
-        console.log('Ping received from client', data);        
+    function message_from_client(){
+        
+    }
+
+    socket.on('ping_from_client', function (data_from_client) {        
+        events.on_ping_received(socket, data_from_client);
     });
+
     socket.on('disconnected', function (msg) {
         console.log('User disconnected: ' + socket.id);        
     });
 
     let data_for_client = {client_id: socket.id};
-    console.log('pinging to client', data_for_client);
     emit_methods.me_only(socket, 'ping_from_server', data_for_client);
 });
-
 
 server.listen(3000, function () {
     console.log('listening on *:3000');
